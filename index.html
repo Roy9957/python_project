@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ইমেইল ভেরিফিকেশন ফলাফল</title>
+    <!-- Firebase SDK -->
+    <script type="module">
+      // Firebase SDK থেকে প্রয়োজনীয় ফাংশন ইম্পোর্ট করা
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+      import { getAuth, applyActionCode, isSignInWithEmailLink } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+      // আপনার Firebase অ্যাপের কনফিগারেশন
+      const firebaseConfig = {
+        apiKey: "AIzaSyAfRqlmZ1dhxchlbV7kUSKA7YKK2UMcB2c",
+        authDomain: "pixelora-52447.firebaseapp.com",
+        databaseURL: "https://pixelora-52447-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "pixelora-52447",
+        storageBucket: "pixelora-52447.firebasestorage.app",
+        messagingSenderId: "884362596684",
+        appId: "1:884362596684:web:ac2863e42454050d2e7fe9",
+        measurementId: "G-87192GG2Q0"
+      };
+
+      // Firebase ইনিশিয়ালাইজ করা
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // পেজ লোড হওয়ার সাথে সাথে, Firebase লিঙ্কের জন্য যাচাই করা হবে
+      window.onload = function() {
+        const emailLink = window.location.href;
+
+        // যাচাই করা হচ্ছে যে এটি একটি বৈধ ইমেইল ভেরিফিকেশন লিঙ্ক কিনা
+        if (isSignInWithEmailLink(auth, emailLink)) {
+          const email = window.localStorage.getItem('emailForSignIn'); // আগের লগইন সময়ে স্টোর করা ইমেইল
+          
+          // ইমেইল ভেরিফিকেশন প্রক্রিয়া চালানো
+          applyActionCode(auth, emailLink)
+            .then(() => {
+              // ভেরিফিকেশন সফল হলে
+              document.getElementById("statusMessage").innerText = "আপনার ইমেইল সঠিকভাবে ভেরিফাইড হয়েছে!";
+            })
+            .catch((error) => {
+              // ত্রুটি ঘটলে
+              document.getElementById("statusMessage").innerText = "ভেরিফিকেশন ত্রুটি: " + error.message;
+            });
+        } else {
+          document.getElementById("statusMessage").innerText = "এটি একটি অকার্যকর ভেরিফিকেশন লিঙ্ক।";
+        }
+      };
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        #statusMessage {
+            margin-top: 20px;
+            color: #5bc0de;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ইমেইল ভেরিফিকেশন ফলাফল</h1>
+        <p id="statusMessage">অপেক্ষা করুন...</p>
+    </div>
+</body>
+</html>
